@@ -135,6 +135,7 @@
   "use strict";
   var QUESTIONS = [{"id": "q1_date", "kind": "date", "text": "Today's date"}, {"id": "q2_sleep", "kind": "one", "text": "How did you sleep last night?"}, {"id": "q3_headache", "kind": "one", "text": "In the past week, how often did you have a headache?"}, {"id": "q4_tired", "kind": "one", "text": "In the past week, how often did you feel tired?"}, {"id": "q5_walk", "kind": "one", "text": "Did you go for a walk today?"}, {"id": "q6_ate", "kind": "many", "text": "Which of these did you eat today?"}, {"id": "q7_water", "kind": "number", "text": "How many glasses of water did you drink today?"}, {"id": "q8_else", "kind": "text", "text": "Is there anything else you would like Leon to know?"}];
   var KEY = "practice-form-answers-v1";
+  var LEON = "lgplonis@gmail.com";
   var MONTHS = ["January","February","March","April","May","June","July","August",
                 "September","October","November","December"];
   var form = document.getElementById("form");
@@ -202,22 +203,23 @@
   }
 
   function mailFallback(text) {
-    window.location.href = "mailto:?subject=" + encodeURIComponent("Practice form") +
+    window.location.href = "mailto:" + LEON + "?subject=" + encodeURIComponent("Practice form") +
                            "&body=" + encodeURIComponent(text);
-    say("Your email should open now. Pick Leon, then tap Send.");
+    say("Your email should open now, addressed to Leon. Tap Send.");
   }
 
   // Gmail: the Gmail app if it is installed (iPad), otherwise Gmail in the browser.
   document.getElementById("gmail").addEventListener("click", function () {
+    var to = encodeURIComponent(LEON);
     var subject = encodeURIComponent("Practice form"), body = encodeURIComponent(answersText());
-    var web = "https://mail.google.com/mail/?view=cm&fs=1&su=" + subject + "&body=" + body;
+    var web = "https://mail.google.com/mail/?view=cm&fs=1&to=" + to + "&su=" + subject + "&body=" + body;
     var isApple = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
                   (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
     if (isApple) {
       var left = false;
       var onHide = function () { if (document.hidden) left = true; };
       document.addEventListener("visibilitychange", onHide);
-      window.location.href = "googlegmail://co?subject=" + subject + "&body=" + body;
+      window.location.href = "googlegmail://co?to=" + to + "&subject=" + subject + "&body=" + body;
       setTimeout(function () {
         document.removeEventListener("visibilitychange", onHide);
         if (!left) window.location.href = web;
@@ -225,7 +227,7 @@
     } else {
       window.location.href = web;
     }
-    say("Gmail should open now with your answers. Type Leon's name in To, then tap Send.");
+    say("Gmail should open now with your answers, addressed to Leon. Tap Send.");
   });
 
   document.getElementById("send").addEventListener("click", function () {
