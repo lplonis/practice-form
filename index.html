@@ -219,7 +219,7 @@
       var left = false;
       var onHide = function () { if (document.hidden) left = true; };
       document.addEventListener("visibilitychange", onHide);
-      window.location.href = "googlegmail://co?to=" + to + "&subject=" + subject + "&body=" + body;
+      window.location.href = "googlegmail:///co?to=" + to + "&subject=" + subject + "&body=" + body;
       setTimeout(function () {
         document.removeEventListener("visibilitychange", onHide);
         if (!left) window.location.href = web;
