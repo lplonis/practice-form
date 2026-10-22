@@ -134,7 +134,7 @@
 (function () {
   "use strict";
   var QUESTIONS = [{"id": "q1_date", "kind": "date", "text": "Today's date"}, {"id": "q2_sleep", "kind": "one", "text": "How did you sleep last night?"}, {"id": "q3_headache", "kind": "one", "text": "In the past week, how often did you have a headache?"}, {"id": "q4_tired", "kind": "one", "text": "In the past week, how often did you feel tired?"}, {"id": "q5_walk", "kind": "one", "text": "Did you go for a walk today?"}, {"id": "q6_ate", "kind": "many", "text": "Which of these did you eat today?"}, {"id": "q7_water", "kind": "number", "text": "How many glasses of water did you drink today?"}, {"id": "q8_else", "kind": "text", "text": "Is there anything else you would like Leon to know?"}];
-  var KEY = "practice-form-answers-v1";
+  var KEY = "practice-form-answers-v2";
   var LEON = "lgplonis@gmail.com";
   var MONTHS = ["January","February","March","April","May","June","July","August",
                 "September","October","November","December"];
@@ -176,6 +176,11 @@
     try { window.localStorage.setItem(KEY, JSON.stringify(collect())); } catch (e) {}
   }
 
+  // Once her answers are on their way, the next visit starts blank.
+  function forget() {
+    try { window.localStorage.removeItem(KEY); } catch (e) {}
+  }
+
   function niceDate(v) {
     var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v || "");
     return m ? (parseInt(m[3], 10) + " " + MONTHS[parseInt(m[2], 10) - 1] + " " + m[1]) : (v || "");
@@ -203,6 +208,7 @@
   }
 
   function mailFallback(text) {
+    forget();
     window.location.href = "mailto:" + LEON + "?subject=" + encodeURIComponent("Practice form") +
                            "&body=" + encodeURIComponent(text);
     say("Your email should open now, addressed to Leon. Tap Send.");
@@ -212,6 +218,7 @@
   document.getElementById("gmail").addEventListener("click", function () {
     var to = encodeURIComponent(LEON);
     var subject = encodeURIComponent("Practice form"), body = encodeURIComponent(answersText());
+    forget();
     var web = "https://mail.google.com/mail/?view=cm&fs=1&to=" + to + "&su=" + subject + "&body=" + body;
     var isApple = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
                   (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
@@ -234,6 +241,7 @@
     var text = answersText();
     if (navigator.share) {
       navigator.share({ title: "Practice form", text: text }).then(function () {
+        forget();
         say("\u2714 Sent. Thank you!");
       }, function (err) {
         if (err && err.name === "AbortError") { say("Not sent yet. Tap a send button to try again."); }
